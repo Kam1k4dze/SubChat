@@ -165,7 +165,6 @@ void ShowColorEdit(const char *label, Color &color) {
 
 
 int main(int, char **) {
-    NFD_Init();
     glfwSetErrorCallback(glfw_error_callback);
     if (!glfwInit())
         return 1;
@@ -177,6 +176,11 @@ int main(int, char **) {
         return 1;
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1);
+
+    if (NFD_Init() != NFD_OKAY) {
+        printf("Error: %s\n", NFD_GetError());
+        return 1;
+    }
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -315,8 +319,8 @@ int main(int, char **) {
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
+    NFD_Quit();
     glfwDestroyWindow(window);
     glfwTerminate();
-    NFD_Quit();
     return 0;
 }
