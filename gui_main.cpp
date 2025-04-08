@@ -165,6 +165,7 @@ void ShowColorEdit(const char *label, Color &color) {
 
 
 int main(int, char **) {
+    NFD_Init();
     glfwSetErrorCallback(glfw_error_callback);
     if (!glfwInit())
         return 1;
@@ -316,5 +317,6 @@ int main(int, char **) {
     ImGui::DestroyContext();
     glfwDestroyWindow(window);
     glfwTerminate();
+    NFD_Quit();
     return 0;
 }
