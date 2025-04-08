@@ -29,14 +29,15 @@ struct InteractiveTextOverlay {
         return (((params.verticalMargin + N * params.verticalSpacing) * 0.96f) + 2.15f) / 100.0f;
     }
 
+    // TODO: make preview take into account the color of the nickname from the messages
     std::vector<std::pair<std::string, std::string>> preview;
     bool revalidatePreview = true;
     bool isInsidePicture = true;
 
     void generatePreview() {
         preview.clear();
-        for (const auto &[name, text]: messages) {
-            auto [username, wrapped] = wrapMessage(name, params.usernameSeparator, text, params.maxCharsPerLine);
+        for (const auto &message: messages) {
+            auto [username, wrapped] = wrapMessage(message.user.name, params.usernameSeparator, message.message, params.maxCharsPerLine);
             if (wrapped.empty()) {
                 continue;
             }
@@ -52,59 +53,59 @@ struct InteractiveTextOverlay {
         revalidatePreview = false;
     }
 
-    std::vector<std::pair<std::string, std::string>> messages = {
-            {"Sirius",        "Lorem ipsum dolor sit amet, consectetur adipiscing elit."},
-            {"Betelgeuse",    "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."},
-            {"Vega",          "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris."},
-            {"Rigel",         "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore."},
-            {"Antares",       "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia."},
-            {"Arcturus",      "Curabitur pretium tincidunt lacus. Nulla gravida orci a odio."},
-            {"Aldebaran",     "Pellentesque habitant morbi tristique senectus et netus et malesuada fames."},
-            {"Procyon",       "Maecenas sed diam eget risus varius blandit sit amet non magna."},
-            {"Capella",       "Cras mattis consectetur purus sit amet fermentum."},
-            {"Altair",        "Aenean lacinia bibendum nulla sed consectetur."},
-            {"Pollux",        "Vestibulum id ligula porta felis euismod semper."},
-            {"Spica",         "Praesent commodo cursus magna, vel scelerisque nisl consectetur et."},
-            {"Deneb",         "Nullam quis risus eget urna mollis ornare vel eu leo."},
-            {"Canopus",       "Etiam porta sem malesuada magna mollis euismod."},
-            {"Fomalhaut",     "Donec ullamcorper nulla non metus auctor fringilla."},
-            {"Bellatrix",     "Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis."},
-            {"Achernar",      "Integer posuere erat a ante venenatis dapibus posuere velit aliquet."},
-            {"Regulus",       "Sed posuere consectetur est at lobortis."},
-            {"Castor",        "Curabitur blandit tempus porttitor."},
-            {"Mira",          "Morbi leo risus, porta ac consectetur ac, vestibulum at eros."},
-            {"Alpheratz",     "Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh."},
-            {"Shaula",        "Donec id elit non mi porta gravida at eget metus."},
-            {"Zubenelgenubi", "Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor."},
-            {"Sadr",          "Integer nec odio. Praesent libero. Sed cursus ante dapibus diam."},
-            {"Nunki",         "Suspendisse potenti. Morbi fringilla convallis sapien."},
-            {"Hadar",         "Curabitur tortor. Pellentesque nibh."},
-            {"Mintaka",       "Aenean quam. In scelerisque sem at dolor."},
-            {"Alnilam",       "Maecenas mattis. Sed convallis tristique sem."},
-            {"Wezen",         "Proin ut ligula vel nunc egestas porttitor."},
-            {"Naos",          "Aliquam erat volutpat. Nulla facilisi."},
-            {"Rasalhague",    "Nam dui ligula, fringilla a, euismod sodales, sollicitudin vel, wisi."},
-            {"Markab",        "Nulla facilisi. Aenean nec eros."},
-            {"Diphda",        "Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere."},
-            {"Enif",          "Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."},
-            {"Unukalhai",     "Fusce lacinia arcu et nulla."},
-            {"Gienah",        "Suspendisse in justo eu magna luctus suscipit."},
-            {"Algol",         "Curabitur at lacus ac velit ornare lobortis."},
-            {"Menkar",        "Nullam nulla eros, ultricies sit amet, nonummy id, imperdiet feugiat."},
-            {"Saiph",         "Phasellus viverra nulla ut metus varius laoreet."},
-            {"Izar",          "Quisque rutrum. Aenean imperdiet."},
-            {"Alhena",        "Etiam ultricies nisi vel augue."},
-            {"Menkalinan",    "Curabitur ullamcorper ultricies nisi."},
-            {"Avior",         "Donec mollis hendrerit risus."},
-            {"Peacock",       "Praesent egestas tristique nibh."},
-            {"Hamal",         "Curabitur blandit mollis lacus."},
-            {"Eltanin",       "Nam adipiscing. Vestibulum eu odio."},
-            {"Sadalmelik",    "Curabitur vestibulum aliquam leo."},
-            {"Ankaa",         "Pellentesque habitant morbi tristique senectus et netus et malesuada."},
-            {"Tarazed",       "Nunc nonummy metus. Vestibulum volutpat pretium libero."},
-            {"Caph",          "Duis leo. Sed fringilla mauris sit amet nibh."},
-            {"Alsephina",     "Donec sodales sagittis magna."},
-            {"Sabik",         "Fusce fermentum odio nec arcu."}
+    std::vector<ChatMessage> messages = {
+            {0, {"Sirius"},        "Lorem ipsum dolor sit amet, consectetur adipiscing elit."},
+            {0, {"Betelgeuse"},    "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."},
+            {0, {"Vega"},          "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris."},
+            {0, {"Rigel"},         "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore."},
+            {0, {"Antares"},       "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia."},
+            {0, {"Arcturus"},      "Curabitur pretium tincidunt lacus. Nulla gravida orci a odio."},
+            {0, {"Aldebaran"},     "Pellentesque habitant morbi tristique senectus et netus et malesuada fames."},
+            {0, {"Procyon"},       "Maecenas sed diam eget risus varius blandit sit amet non magna."},
+            {0, {"Capella"},       "Cras mattis consectetur purus sit amet fermentum."},
+            {0, {"Altair"},        "Aenean lacinia bibendum nulla sed consectetur."},
+            {0, {"Pollux"},        "Vestibulum id ligula porta felis euismod semper."},
+            {0, {"Spica"},         "Praesent commodo cursus magna, vel scelerisque nisl consectetur et."},
+            {0, {"Deneb"},         "Nullam quis risus eget urna mollis ornare vel eu leo."},
+            {0, {"Canopus"},       "Etiam porta sem malesuada magna mollis euismod."},
+            {0, {"Fomalhaut"},     "Donec ullamcorper nulla non metus auctor fringilla."},
+            {0, {"Bellatrix"},     "Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis."},
+            {0, {"Achernar"},      "Integer posuere erat a ante venenatis dapibus posuere velit aliquet."},
+            {0, {"Regulus"},       "Sed posuere consectetur est at lobortis."},
+            {0, {"Castor"},        "Curabitur blandit tempus porttitor."},
+            {0, {"Mira"},          "Morbi leo risus, porta ac consectetur ac, vestibulum at eros."},
+            {0, {"Alpheratz"},     "Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh."},
+            {0, {"Shaula"},        "Donec id elit non mi porta gravida at eget metus."},
+            {0, {"Zubenelgenubi"}, "Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor."},
+            {0, {"Sadr"},          "Integer nec odio. Praesent libero. Sed cursus ante dapibus diam."},
+            {0, {"Nunki"},         "Suspendisse potenti. Morbi fringilla convallis sapien."},
+            {0, {"Hadar"},         "Curabitur tortor. Pellentesque nibh."},
+            {0, {"Mintaka"},       "Aenean quam. In scelerisque sem at dolor."},
+            {0, {"Alnilam"},       "Maecenas mattis. Sed convallis tristique sem."},
+            {0, {"Wezen"},         "Proin ut ligula vel nunc egestas porttitor."},
+            {0, {"Naos"},          "Aliquam erat volutpat. Nulla facilisi."},
+            {0, {"Rasalhague"},    "Nam dui ligula, fringilla a, euismod sodales, sollicitudin vel, wisi."},
+            {0, {"Markab"},        "Nulla facilisi. Aenean nec eros."},
+            {0, {"Diphda"},        "Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere."},
+            {0, {"Enif"},          "Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."},
+            {0, {"Unukalhai"},     "Fusce lacinia arcu et nulla."},
+            {0, {"Gienah"},        "Suspendisse in justo eu magna luctus suscipit."},
+            {0, {"Algol"},         "Curabitur at lacus ac velit ornare lobortis."},
+            {0, {"Menkar"},        "Nullam nulla eros, ultricies sit amet, nonummy id, imperdiet feugiat."},
+            {0, {"Saiph"},         "Phasellus viverra nulla ut metus varius laoreet."},
+            {0, {"Izar"},          "Quisque rutrum. Aenean imperdiet."},
+            {0, {"Alhena"},        "Etiam ultricies nisi vel augue."},
+            {0, {"Menkalinan"},    "Curabitur ullamcorper ultricies nisi."},
+            {0, {"Avior"},         "Donec mollis hendrerit risus."},
+            {0, {"Peacock"},       "Praesent egestas tristique nibh."},
+            {0, {"Hamal"},         "Curabitur blandit mollis lacus."},
+            {0, {"Eltanin"},       "Nam adipiscing. Vestibulum eu odio."},
+            {0, {"Sadalmelik"},    "Curabitur vestibulum aliquam leo."},
+            {0, {"Ankaa"},         "Pellentesque habitant morbi tristique senectus et netus et malesuada."},
+            {0, {"Tarazed"},       "Nunc nonummy metus. Vestibulum volutpat pretium libero."},
+            {0, {"Caph"},          "Duis leo. Sed fringilla mauris sit amet nibh."},
+            {0, {"Alsephina"},     "Donec sodales sagittis magna."},
+            {0, {"Sabik"},         "Fusce fermentum odio nec arcu."}
     };
 };
 
