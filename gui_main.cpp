@@ -245,7 +245,8 @@ int main(int, char **) {
                 printf("Error: %s\n", NFD_GetError());
             }
         }
-        if (ImGui::Button("Load Logs for Preview")) {
+        if (preview_texture == 0) ImGui::BeginDisabled();
+        if (ImGui::Button("Load Chat Logs for Preview")) {
             nfdu8char_t *outPath = nullptr;
             nfdu8filteritem_t filters[1] = {{"CSV files", "csv"}};
             nfdopendialogu8args_t args = {0};
@@ -265,7 +266,6 @@ int main(int, char **) {
                 printf("Error: %s\n", NFD_GetError());
             }
         }
-        if (preview_texture == 0) ImGui::BeginDisabled();
         ImGui::SliderInt("X", &p.horizontalMargin, 0, 100);
         ImGui::SliderInt("Y", &p.verticalMargin, 0, 100);
         ImGui::SliderInt("Font size", &p.fontSizePercent, 0, 300);
