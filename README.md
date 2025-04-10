@@ -141,7 +141,7 @@ The CLI tool has two modes of operation:
 #### 2. Config Creation Mode - Create config files from command line
 
 ```bash
-./subtitles_generator create-config <output_file> [options]
+./subtitles_generator create-config --output <output_file> [options]
 ```
 
 Creates a new config file with the specified settings. All options have reasonable defaults.
@@ -168,5 +168,5 @@ Creates a new config file with the specified settings. All options have reasonab
 
 **Example:**
 ```bash
-./subtitles_generator create-config my_config.ini --bold --font-style Monospaced --fg-color "#00FF00" --edge-type SoftShadow --display-lines 10
+./subtitles_generator create-config --output my_config.ini --bold --font-style Monospaced --fg-color "#00FF00" --edge-type SoftShadow --display-lines 10
 ```

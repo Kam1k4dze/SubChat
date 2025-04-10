@@ -27,7 +27,7 @@ include_directories(
 # Static executable for subtitle generation (CLI)
 # ─────────────────────────────────────────────────────────────────
 set(CSV_CXX_STANDARD ${CMAKE_CXX_STANDARD})
-add_subdirectory("${CMAKE_SOURCE_DIR}/submodules/CLI11")
+# Removed CLI11 dependency
 
 add_executable(subtitles_generator
         cli_main.cpp
@@ -41,10 +41,7 @@ target_include_directories(subtitles_generator
         ${MAGICENUM_DIR}/include/magic_enum
 )
 target_link_options(subtitles_generator PRIVATE -static)
-target_link_libraries(subtitles_generator
-        PRIVATE
-        CLI11::CLI11
-)
+# Removed CLI11 from target_link_libraries
 
 # ─────────────────────────────────────────────────────────────────
 # GUI config generator

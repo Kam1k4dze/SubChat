@@ -1,12 +1,12 @@
 #include "ytt_generator.h"
-#include <CLI/CLI.hpp>
+#include "cli_parser.h"
 #include <iostream>
 #include <fstream>
 #include <vector>
 #include <string>
 
 // Function to handle config creation mode
-int handleConfigCreation(const CLI::App* config_mode, const std::string& new_config_path, 
+int handleConfigCreation(const SubChat::Subcommand* config_mode, const std::string& new_config_path, 
                          bool textBold, bool textItalic, bool textUnderline, 
                          const std::string& fontStyle, const std::string& textForeground, 
                          const std::string& textBackground, const std::string& textEdgeColor, 
@@ -80,7 +80,7 @@ int handleConvertMode(const std::string& configPath, const std::string& csvPath,
 }
 
 int main(int argc, char *argv[]) {
-    CLI::App app{"Chat → YTT/SRV3 subtitle generator"};
+    SubChat::App app("Chat → YTT/SRV3 subtitle generator");
 
     std::string configPath, csvPath, outputPath;
     std::string timeUnit;
@@ -88,22 +88,22 @@ int main(int argc, char *argv[]) {
     // Main command mode - convert CSV to subtitles
     auto* convert_mode = app.add_subcommand("convert", "Convert chat CSV to subtitle file");
     convert_mode->add_option("-c,--config", configPath, "Path to INI config file")
-            ->required()
-            ->check(CLI::ExistingFile);
+        ->required()
+        ->check(SubChat::Validators::ExistingFile());
     convert_mode->add_option("-i,--input", csvPath, "Path to chat CSV file")
-            ->required()
-            ->check(CLI::ExistingFile);
+        ->required()
+        ->check(SubChat::Validators::ExistingFile());
     convert_mode->add_option("-o,--output", outputPath, "Output file (e.g. output.srv3 or output.ytt)")
-            ->required();
+        ->required();
     convert_mode->add_option("-u,--time-unit", timeUnit, "Time unit inside CSV: \"ms\" or \"sec\"")
-            ->required()
-            ->check(CLI::IsMember({"ms", "sec"}, CLI::ignore_case));
+        ->required()
+        ->check(SubChat::Validators::IsMember({"ms", "sec"}, true));
 
     // Config creation mode
     auto* config_mode = app.add_subcommand("create-config", "Create a new config file with specified settings");
     std::string new_config_path;
-    config_mode->add_option("output", new_config_path, "Output path for the new config file")
-            ->required();
+    config_mode->add_option("-o,--output", new_config_path, "Output path for the new config file")
+        ->required();
 
     // Basic configuration options
     bool textBold = false;
@@ -127,15 +127,16 @@ int main(int argc, char *argv[]) {
     config_mode->add_flag("--italic", textItalic, "Make text italic");
     config_mode->add_flag("--underline", textUnderline, "Make text underlined");
     config_mode->add_option("--font-style", fontStyle, "Font style")
-            ->check(CLI::IsMember({"Default", "Monospaced", "Proportional", "MonospacedSans", 
-                                  "ProportionalSans", "Casual", "Cursive", "SmallCapitals"}));
+        ->check(SubChat::Validators::IsMember({
+            "Default", "Monospaced", "Proportional", "MonospacedSans", 
+            "ProportionalSans", "Casual", "Cursive", "SmallCapitals"}));
     config_mode->add_option("--fg-color", textForeground, "Text foreground color (hex format)");
     config_mode->add_option("--bg-color", textBackground, "Text background color (hex format)");
     config_mode->add_option("--edge-color", textEdgeColor, "Text edge color (hex format)");
     config_mode->add_option("--edge-type", textEdgeType, "Text edge type")
-            ->check(CLI::IsMember({"None", "HardShadow", "Bevel", "GlowOutline", "SoftShadow"}));
+        ->check(SubChat::Validators::IsMember({"None", "HardShadow", "Bevel", "GlowOutline", "SoftShadow"}));
     config_mode->add_option("--text-align", textAlignment, "Text alignment")
-            ->check(CLI::IsMember({"Left", "Right", "Center"}));
+        ->check(SubChat::Validators::IsMember({"Left", "Right", "Center"}));
     config_mode->add_option("--font-size", fontSizePercent, "Font size percent (0-300)");
     config_mode->add_option("--h-margin", horizontalMargin, "Horizontal margin (0-100)");
     config_mode->add_option("--v-margin", verticalMargin, "Vertical margin (0-100)");
@@ -147,14 +148,14 @@ int main(int argc, char *argv[]) {
     // Make subcommands required (must choose one)
     app.require_subcommand(1);
 
-    CLI11_PARSE(app, argc, argv);
+    SUBCHAT_PARSE(app, argc, argv);
 
     // Handle config creation mode
     int configResult = handleConfigCreation(config_mode, new_config_path, textBold, textItalic, textUnderline, 
-                                            fontStyle, textForeground, textBackground, textEdgeColor, 
-                                            textEdgeType, textAlignment, fontSizePercent, horizontalMargin, 
-                                            verticalMargin, verticalSpacing, totalDisplayLines, maxCharsPerLine, 
-                                            usernameSeparator);
+                                           fontStyle, textForeground, textBackground, textEdgeColor, 
+                                           textEdgeType, textAlignment, fontSizePercent, horizontalMargin, 
+                                           verticalMargin, verticalSpacing, totalDisplayLines, maxCharsPerLine, 
+                                           usernameSeparator);
     if (configResult == 0) {
         return 0;
     }

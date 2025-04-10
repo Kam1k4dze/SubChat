@@ -11,9 +11,6 @@
 [submodule "submodules/glfw"]
 	path = submodules/glfw
 	url = https://github.com/glfw/glfw.git
-[submodule "submodules/CLI11"]
-	path = submodules/CLI11
-	url = https://github.com/CLIUtils/CLI11
 [submodule "submodules/nativefiledialog-extended"]
 	path = submodules/nativefiledialog-extended
 	url = https://github.com/btzy/nativefiledialog-extended
