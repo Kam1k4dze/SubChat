@@ -115,12 +115,12 @@ Launch this tool to generate or modify INI config files:
 
 ### subtitles_generator
 
-Convert a chat CSV into a subtitle file using a config file.
+The CLI tool has two modes of operation:
 
-#### Command-Line Options
+#### 1. Convert Mode - Generate subtitle files
 
 ```bash
-./subtitles_generator -c <config_path> -i <chat_csv_path> -o <output_file> -u <time_unit>
+./subtitles_generator convert -c <config_path> -i <chat_csv_path> -o <output_file> -u <time_unit>
 ```
 
 - `-h, --help`  
@@ -137,3 +137,36 @@ Convert a chat CSV into a subtitle file using a config file.
 
 - `-u, --time-unit`  
   Time unit in the CSV: `"ms"` or `"sec"`.
+
+#### 2. Config Creation Mode - Create config files from command line
+
+```bash
+./subtitles_generator create-config <output_file> [options]
+```
+
+Creates a new config file with the specified settings. All options have reasonable defaults.
+
+**Basic Options:**
+- `--bold` - Make text bold
+- `--italic` - Make text italic  
+- `--underline` - Make text underlined
+- `--font-style <style>` - Font style (Default, Monospaced, Proportional, etc.)
+- `--fg-color <hex>` - Text foreground color (e.g., "#FFFFFF")
+- `--bg-color <hex>` - Text background color with alpha (e.g., "#00000080")
+- `--edge-color <hex>` - Text edge color (e.g., "#000000")
+- `--edge-type <type>` - Edge type (None, HardShadow, Bevel, GlowOutline, SoftShadow)
+- `--text-align <align>` - Text alignment (Left, Right, Center)
+
+**Layout Options:**
+- `--font-size <size>` - Font size percent (0-300)
+- `--h-margin <margin>` - Horizontal margin (0-100)
+- `--v-margin <margin>` - Vertical margin (0-100)
+- `--v-spacing <spacing>` - Vertical spacing between lines
+- `--display-lines <count>` - Total number of lines to display
+- `--max-chars <count>` - Maximum characters per line
+- `--username-sep <separator>` - Username separator
+
+**Example:**
+```bash
+./subtitles_generator create-config my_config.ini --bold --font-style Monospaced --fg-color "#00FF00" --edge-type SoftShadow --display-lines 10
+```
