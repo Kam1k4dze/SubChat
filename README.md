@@ -106,6 +106,9 @@ cmake --build .
 
 ## Usage
 
+> [!NOTE]
+> You can set `verticalSpacing` to `-1` manually to make subtitles a single text block. (The GUI currently doesn't support previewing this.)
+
 ### config_generator_gui
 
 Launch this tool to generate or modify INI config files:
@@ -139,3 +142,7 @@ Convert a chat CSV into a subtitle file using a config file.
 
 - `-u, --time-unit`  
   Time unit in the CSV: `"ms"` or `"sec"`.
+
+ ### Config Format
+
+ 
