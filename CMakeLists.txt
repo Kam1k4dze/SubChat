@@ -52,7 +52,10 @@ target_link_libraries(subtitles_generator
 if (BUILD_GUI)
     # Find GUI dependencies
     find_package(OpenGL REQUIRED)
-    find_package(GLEW REQUIRED)
+
+    # glad configuration
+    set(GLAD_DIR "${CMAKE_SOURCE_DIR}/submodules/glad")
+    include_directories(${GLAD_DIR}/include)
 
     # GLFW configuration
     set(GLFW_DIR "${CMAKE_SOURCE_DIR}/submodules/glfw")
@@ -73,6 +76,7 @@ if (BUILD_GUI)
 
     # Add GUI executable
     add_executable(config_generator_gui
+            ${GLAD_DIR}/src/glad.c
             ${IMGUI_DIR}/backends/imgui_impl_glfw.cpp
             ${IMGUI_DIR}/backends/imgui_impl_opengl3.cpp
             ${IMGUI_DIR}/imgui.cpp
@@ -90,7 +94,6 @@ if (BUILD_GUI)
             PRIVATE
             glfw
             OpenGL::GL
-            GLEW::GLEW
             nfd
     )
 endif ()

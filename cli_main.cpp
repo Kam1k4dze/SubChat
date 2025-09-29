@@ -1,3 +1,10 @@
+#if defined(_WIN32)
+// Do not include most things and no min/max defines (std::min/std::max).
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
+#include <Windows.h>
+#endif
+
 #include "ytt_generator.h"
 #include <CLI/CLI.hpp>
 #include <iostream>

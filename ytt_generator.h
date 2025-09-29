@@ -14,6 +14,11 @@
 #include <iterator>
 #include <queue>
 #include <ranges>
+
+#if defined(_WIN32)
+#undef assert
+#endif
+
 #include "utf8.h"
 #include "tinyxml2.h"
 #include "SimpleIni.h"
@@ -342,7 +347,8 @@ struct ChatParams {
         ini.SaveFile(filename);
     }
 
-    bool loadFromFile(const char *filename) {
+    template<typename T>
+    bool loadFromFile(const T *filename) {
         CSimpleIniCaseA ini;
         ini.SetUnicode();
         ini.SetQuotes();

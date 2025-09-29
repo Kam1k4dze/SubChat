@@ -2,10 +2,17 @@
 #define IMGUI_DEFINE_MATH_OPERATORS
 #endif // IMGUI_DEFINE_MATH_OPERATORS
 
+#if defined(_WIN32)
+// Do not include most things and no min/max defines (std::min/std::max).
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
+#include <Windows.h>
+#endif
+
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
-#include <GL/glew.h>
+#include <glad/glad.h>
 #include <cstdio>
 
 #define GL_SILENCE_DEPRECATION
@@ -176,6 +183,9 @@ int main(int, char **) {
         return 1;
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1);
+
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+        return 1;
 
     if (NFD_Init() != NFD_OKAY) {
         printf("Error: %s\n", NFD_GetError());
