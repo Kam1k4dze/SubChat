@@ -10,6 +10,7 @@ int main(int argc, char *argv[]) {
 
     std::filesystem::path configPath, csvPath, outputPath;
     std::string timeUnit;
+    int shiftTime;
 
     app.add_option("-c,--config", configPath, "Path to INI config file")
             ->required()
@@ -22,6 +23,7 @@ int main(int argc, char *argv[]) {
     app.add_option("-u,--time-unit", timeUnit, "Time unit inside CSV: “ms” or “sec”")
             ->required()
             ->check(CLI::IsMember({"ms", "sec"}, CLI::ignore_case));
+    app.add_option("-s,--shift",shiftTime, "Time in sec to shift the subtitles by");
 
     CLI11_PARSE(app, argc, argv);
 
@@ -33,7 +35,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    auto chat = parseCSV(csvPath, multiplier);
+    auto chat = parseCSV(csvPath, multiplier, shiftTime);
     if (chat.empty()) {
         std::cerr << "Error: Failed to parse chat CSV or it's empty: " << csvPath << "\n";
         return 1;

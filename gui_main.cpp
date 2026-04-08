@@ -257,7 +257,7 @@ int main(int, char **) {
             nfdresult_t result = NFD_OpenDialogU8_With(&outPath, &args);
             if (result == NFD_OKAY) {
                 int multiplier = 1; // TODO: some way to customize time units
-                text_overlay.messages = parseCSV(outPath, multiplier);
+                text_overlay.messages = parseCSV(outPath, multiplier,0);
                 text_overlay.revalidatePreview = true;
                 NFD_FreePathU8(outPath);
             } else if (result == NFD_CANCEL) {

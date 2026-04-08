@@ -678,7 +678,7 @@ inline Color getRandomColor(const std::string &username) {
 }
 
 // dumb and simple way to parse CSV
-inline std::vector<ChatMessage> parseCSV(const std::filesystem::path &filename, int timeMultiplier) {
+inline std::vector<ChatMessage> parseCSV(const std::filesystem::path &filename, int timeMultiplier, int shiftTime) {
     std::vector<ChatMessage> messages;
     std::ifstream file(filename);
     std::string line;
@@ -700,7 +700,12 @@ inline std::vector<ChatMessage> parseCSV(const std::filesystem::path &filename, 
         ChatMessage msg;
 
         std::getline(ss, field, ',');
-        msg.time = std::stoi(field) * timeMultiplier;
+        msg.time = std::stoi(field)  * timeMultiplier;
+        // would the message be shifted to a time < 0? then skip it
+        if(shiftTime < 0 && msg.time < -shiftTime){
+            continue;
+        }
+        msg.time += shiftTime*1000;
 
         std::getline(ss, msg.user.name, ',');
 
