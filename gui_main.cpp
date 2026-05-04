@@ -2,10 +2,17 @@
 #define IMGUI_DEFINE_MATH_OPERATORS
 #endif // IMGUI_DEFINE_MATH_OPERATORS
 
+#if defined(_WIN32)
+// Do not include most things and no min/max defines (std::min/std::max).
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
+#include <Windows.h>
+#endif
+
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
-#include <GL/glew.h>
+#include <glad/glad.h>
 #include <cstdio>
 
 #define GL_SILENCE_DEPRECATION
@@ -106,9 +113,7 @@ void ApplyDPI(float dpi_scale) {
     ImGui::GetStyle() = default_style;
     ImGuiStyle &style = ImGui::GetStyle();
     style.ScaleAllSizes(dpi_scale);
-
 }
-
 
 void ShowDockSpace() {
     ImGuiViewport *vp = ImGui::GetMainViewport();
@@ -168,14 +173,23 @@ int main(int, char **) {
     glfwSetErrorCallback(glfw_error_callback);
     if (!glfwInit())
         return 1;
-    const char *glsl_version = "#version 130";
+    const char* glsl_version = "#version 330 core";
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-    GLFWwindow *window = glfwCreateWindow(1280, 720, "SubChat Config Generator", nullptr, nullptr);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    // https://stackoverflow.com/a/68879218/14915825
+#ifdef __APPLE__
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#endif
+
+    GLFWwindow* window = glfwCreateWindow(1280, 720, "SubChat Config Generator", nullptr, nullptr);
     if (window == nullptr)
         return 1;
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1);
+
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+        return 1;
 
     if (NFD_Init() != NFD_OKAY) {
         printf("Error: %s\n", NFD_GetError());

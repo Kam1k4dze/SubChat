@@ -1,8 +1,14 @@
 cmake_minimum_required(VERSION 3.14)
 project(SubChat LANGUAGES C CXX)
+if (APPLE)
+    enable_language(OBJC)
+endif ()
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON) # does not produce the json file
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "") # works
+
 
 if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build (Debug or Release)" FORCE)
@@ -40,7 +46,9 @@ target_include_directories(subtitles_generator
         ${UTFCPP_DIR}/source
         ${MAGICENUM_DIR}/include/magic_enum
 )
-target_link_options(subtitles_generator PRIVATE -static)
+if (NOT APPLE)
+    target_link_options(subtitles_generator PRIVATE -static)
+endif ()
 target_link_libraries(subtitles_generator
         PRIVATE
         CLI11::CLI11
@@ -52,7 +60,10 @@ target_link_libraries(subtitles_generator
 if (BUILD_GUI)
     # Find GUI dependencies
     find_package(OpenGL REQUIRED)
-    find_package(GLEW REQUIRED)
+
+    # glad configuration
+    set(GLAD_DIR "${CMAKE_SOURCE_DIR}/submodules/glad")
+    include_directories(${GLAD_DIR}/include)
 
     # GLFW configuration
     set(GLFW_DIR "${CMAKE_SOURCE_DIR}/submodules/glfw")
@@ -73,6 +84,7 @@ if (BUILD_GUI)
 
     # Add GUI executable
     add_executable(config_generator_gui
+            ${GLAD_DIR}/src/glad.c
             ${IMGUI_DIR}/backends/imgui_impl_glfw.cpp
             ${IMGUI_DIR}/backends/imgui_impl_opengl3.cpp
             ${IMGUI_DIR}/imgui.cpp
@@ -90,7 +102,6 @@ if (BUILD_GUI)
             PRIVATE
             glfw
             OpenGL::GL
-            GLEW::GLEW
             nfd
     )
 endif ()

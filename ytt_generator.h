@@ -14,6 +14,11 @@
 #include <iterator>
 #include <queue>
 #include <ranges>
+
+#if defined(_WIN32)
+#undef assert
+#endif
+
 #include "utf8.h"
 #include "tinyxml2.h"
 #include "SimpleIni.h"
@@ -342,7 +347,8 @@ struct ChatParams {
         ini.SaveFile(filename);
     }
 
-    bool loadFromFile(const char *filename) {
+    template<typename T>
+    bool loadFromFile(const T *filename) {
         CSimpleIniCaseA ini;
         ini.SetUnicode();
         ini.SetQuotes();
@@ -614,7 +620,8 @@ inline std::string generateXML(const std::vector<Batch> &batches, const ChatPara
             pElem->SetAttribute("p", defaultPen.c_str());
             pElem->LinkEndChild(doc.NewText(""));
 
-            for (const auto &[idx, line]: batch.lines | std::ranges::views::enumerate) {
+            size_t idx = 0;
+            for (const auto& line : batch.lines) {
                 if (line.user.has_value()) {
                     XMLElement *sUser = doc.NewElement("s");
                     sUser->SetAttribute("p", colors[line.user->color].c_str());
@@ -628,11 +635,13 @@ inline std::string generateXML(const std::vector<Batch> &batches, const ChatPara
                 sText->SetText(line.text.c_str());
                 pElem->InsertEndChild(sText);
                 pElem->LinkEndChild(doc.NewText("\n"));
+                idx++;
             }
             body->InsertEndChild(pElem);
         } else {
-            for (const auto &[idx, line]: batch.lines | std::ranges::views::enumerate) {
-                XMLElement *pElem = doc.NewElement("p");
+            size_t idx = 0;
+            for (const auto& line : batch.lines) {
+                XMLElement* pElem = doc.NewElement("p");
                 pElem->SetAttribute("t", std::to_string(batch.time).c_str());
                 int duration = nextBatch.time - batch.time;
                 pElem->SetAttribute("d", std::to_string(duration).c_str());
@@ -657,6 +666,7 @@ inline std::string generateXML(const std::vector<Batch> &batches, const ChatPara
                 pElem->LinkEndChild(doc.NewText(""));
 
                 body->InsertEndChild(pElem);
+                idx++;
             }
         }
     }
